@@ -1,0 +1,163 @@
+<% layout("./layouts/main") %>
+
+<div class="form-wrapper">
+  <div class="form-container">
+    <h1 class="form-title">Create New Hackathon</h1>
+    
+    <form action="/hackathons/create" method="POST" class="form-content">
+      <div class="form-group">
+        <label for="title" class="form-label">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          class="form-input"
+          placeholder="Enter hackathon title"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          rows="4"
+          required
+          class="form-input"
+          placeholder="Describe your hackathon"
+        ></textarea>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input
+            type="datetime-local"
+            id="startDate"
+            name="startDate"
+            required
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="endDate" class="form-label">End Date</label>
+          <input
+            type="datetime-local"
+            id="endDate"
+            name="endDate"
+            required
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="registrationDeadline" class="form-label">Registration Deadline</label>
+          <input
+            type="datetime-local"
+            id="registrationDeadline"
+            name="registrationDeadline"
+            required
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="maxTeamSize" class="form-label">Maximum Team Size</label>
+          <input
+            type="number"
+            id="maxTeamSize"
+            name="maxTeamSize"
+            required
+            min="1"
+            max="10"
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      <div id="prizes-container" class="form-group">
+        <label class="form-label">Prizes</label>
+        <div id="prizes-list" class="prize-list">
+          <!-- Prize inputs will be added here -->
+        </div>
+        <button type="button" onclick="addPrize()" class="add-prize-btn">
+          + Add Prize
+        </button>
+      </div>
+
+      <div class="form-footer">
+        <a href="/hackathons" class="cancel-link">Cancel</a>
+        <button type="submit" class="submit-btn">
+          Create Hackathon
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let prizeCount = 0;
+
+function addPrize() {
+  const prizesList = document.getElementById('prizes-list');
+  const prizeDiv = document.createElement('div');
+  prizeDiv.className = 'prize-item';
+  prizeDiv.innerHTML = `
+    <div class="form-group">
+      <label class="form-label">Rank</label>
+      <input
+        type="number"
+        name="prizes[${prizeCount}][rank]"
+        required
+        min="1"
+        class="form-input"
+      >
+    </div>
+    <div class="form-group">
+      <label class="form-label">Value</label>
+      <input
+        type="text"
+        name="prizes[${prizeCount}][value]"
+        required
+        placeholder="e.g., $1000"
+        class="form-input"
+      >
+    </div>
+    <div class="form-group">
+      <button type="button" onclick="this.parentElement.parentElement.remove()" class="remove-prize-btn">
+        Remove
+      </button>
+    </div>
+  `;
+  prizesList.appendChild(prizeDiv);
+  prizeCount++;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  addPrize();
+});
+
+document.querySelector('.form-content').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const prizes = [];
+
+  document.querySelectorAll('.prize-item').forEach((prizeDiv, index) => {
+    prizes.push({
+      rank: formData.get(`prizes[${index}][rank]`),
+      value: formData.get(`prizes[${index}][value]`),
+      description: formData.get(`prizes[${index}][description]`) || ''
+    });
+  });
+
+  formData.set('prizes', JSON.stringify(prizes));
+  this.submit();
+});
+</script>
+
+<%- include('../partials/footer') %>

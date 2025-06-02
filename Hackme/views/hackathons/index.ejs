@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/messages') %>
+
+<div class="container mt-4">
+  <!-- Status Filter Section -->
+  <div class="status-filters mb-4">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="status-buttons">
+            <a href="/hackathons" class="btn <%= !currentStatus || currentStatus === 'all' ? 'btn-primary' : 'btn-outline-primary' %> me-2">
+              All (<%= statusCounts.upcoming + statusCounts.ongoing + statusCounts.ended %>)
+            </a>
+            <a href="/hackathons?status=upcoming" class="btn <%= currentStatus === 'upcoming' ? 'btn-primary' : 'btn-outline-primary' %> me-2">
+              Upcoming (<%= statusCounts.upcoming %>)
+            </a>
+            <a href="/hackathons?status=ongoing" class="btn <%= currentStatus === 'ongoing' ? 'btn-primary' : 'btn-outline-primary' %> me-2">
+              Ongoing (<%= statusCounts.ongoing %>)
+            </a>
+            <a href="/hackathons?status=ended" class="btn <%= currentStatus === 'ended' ? 'btn-primary' : 'btn-outline-primary' %>">
+              Ended (<%= statusCounts.ended %>)
+            </a>
+          </div>
+          <% if (user && user.role === 'organizer') { %>
+            <a href="/hackathons/create" class="btn btn-success">Create Hackathon</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+      <form action="/hackathons" method="GET" class="d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search hackathons..." value="<%= query.search || '' %>">
+        <% if (query.status) { %>
+          <input type="hidden" name="status" value="<%= query.status %>">
+        <% } %>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Hackathons Grid -->
+  <div class="row">
+    <% if (hackathons.length === 0) { %>
+      <div class="col-12 text-center">
+        <h3>No hackathons found</h3>
+      </div>
+    <% } else { %>
+      <% hackathons.forEach(hackathon => { %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title"><%= hackathon.title %></h5>
+                <span class="badge <%= 
+                  hackathon.status === 'upcoming' ? 'bg-primary' : 
+                  hackathon.status === 'ongoing' ? 'bg-success' : 
+                  'bg-secondary' 
+                %>">
+                  <%= hackathon.status.charAt(0).toUpperCase() + hackathon.status.slice(1) %>
+                </span>
+              </div>
+              <p class="card-text"><%= hackathon.description.substring(0, 100) %>...</p>
+              <div class="hackathon-dates mb-3">
+                <small class="text-muted">
+                  <i class="fas fa-calendar"></i> Start: <%= new Date(hackathon.startDate).toLocaleDateString() %><br>
+                  <i class="fas fa-calendar"></i> End: <%= new Date(hackathon.endDate).toLocaleDateString() %>
+                </small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                  <i class="fas fa-users"></i> <%= hackathon.teams.length %> Teams
+                </small>
+                <a href="/hackathons/<%= hackathon._id %>" class="btn btn-outline-primary btn-sm">View Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% for(let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="/hackathons?page=<%= i %><%= query.status ? `&status=${query.status}` : '' %><%= query.search ? `&search=${query.search}` : '' %>">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

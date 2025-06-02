@@ -1,0 +1,35 @@
+<% layout("./layouts/main") %>
+
+<div class="dashboard-section">
+  <h1>Welcome to Hackathon Platform</h1>
+  <p>Join innovative minds and showcase your creativity in our virtual hackathons!</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Upcoming Hackathons</h3>
+      <% if (hackathons && hackathons.length > 0) { %>
+        <% hackathons.forEach(hackathon => { %>
+          <div class="hackathon-card">
+            <h4><%= hackathon.title %></h4>
+            <p><%= hackathon.description %></p>
+            <p>Starts: <%= new Date(hackathon.startDate).toLocaleDateString() %></p>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>No upcoming hackathons at the moment.</p>
+      <% } %>
+    </div>
+    <div class="card">
+      <h3>Why Join Us?</h3>
+      <ul>
+        <li>Connect with talented developers</li>
+        <li>Build innovative projects</li>
+        <li>Win exciting prizes</li>
+        <li>Learn new technologies</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<%- include('./partials/footer') %>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/main.js"></script>

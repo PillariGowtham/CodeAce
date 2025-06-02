@@ -1,0 +1,123 @@
+<% layout("./layouts/main") %>
+
+<div class="form-wrapper">
+  <div class="form-container">
+    <h1 class="form-title">Register Team for Hackathon</h1>
+    
+    <form action="/hackathons/<%= hackathon.id %>/register" method="POST" class="form-content"></form>
+      <!-- Team Name -->
+      <div class="form-group">
+        <label for="teamName" class="form-label">Team Name</label>
+        <input
+          type="text"
+          id="teamName"
+          name="name"
+          required
+          class="form-input"
+          placeholder="Enter team name"
+        >
+      </div>
+
+      <!-- Hackathon Selection -->
+      <div class="form-group">
+
+      <!-- Leader ID (Hidden for Current User) -->
+      <input type="hidden" name="leader" value="<%= user._id %>">
+
+      <!-- Team Members -->
+      <div id="members-container" class="form-group">
+        <label class="form-label">Team Members</label>
+        <div id="members-list" class="prize-list">
+          <!-- Member inputs will be added here -->
+        </div>
+        <button type="button" onclick="addMember()" class="add-prize-btn">
+          + Add Member
+        </button>
+      </div>
+
+      <!-- Project Details -->
+      <div class="form-group">
+        <label for="projectTitle" class="form-label">Project Title (Optional)</label>
+        <input
+          type="text"
+          id="projectTitle"
+          name="project[title]"
+          class="form-input"
+          placeholder="Enter project title"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="projectDescription" class="form-label">Project Description</label>
+        <textarea
+          id="projectDescription"
+          name="project[description]"
+          rows="4"
+          class="form-input"
+          placeholder="Describe your project (optional)"
+        ></textarea>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="githubLink" class="form-label">GitHub Link</label>
+          <input
+            type="url"
+            id="githubLink"
+            name="project[githubLink]"
+            class="form-input"
+            placeholder="https://github.com/your-repo"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="demoLink" class="form-label">Demo Link</label>
+          <input
+            type="url"
+            id="demoLink"
+            name="project[demoLink]"
+            class="form-input"
+            placeholder="https://your-demo-link.com"
+          >
+        </div>
+      </div>
+
+      <!-- Form Footer -->
+        <button type="submit" class="submit-btn">
+          Register Team
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Member Count
+let memberCount = 0;
+
+// Add Team Member Function
+function addMember() {
+  const membersList = document.getElementById('members-list');
+  const memberDiv = document.createElement('div');
+  memberDiv.className = 'prize-item';
+  memberDiv.innerHTML = `
+    <div class="form-group">
+      <label class="form-label">Member Email</label>
+      <input
+        type="email"
+        name="members[${memberCount}]"
+        required
+        class="form-input"
+        placeholder="Enter member email"
+      >
+    </div>
+    <button type="button" onclick="this.parentElement.remove()" class="remove-prize-btn">
+      Remove
+    </button>
+  `;
+  membersList.appendChild(memberDiv);
+  memberCount++;
+}
+</script>
+
+<%- include('../partials/footer') %>

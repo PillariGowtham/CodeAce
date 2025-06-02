@@ -1,0 +1,153 @@
+<% layout("./layouts/main") %>
+<div class="dashboard-page">
+  <div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="dashboard-header-content">
+        <h1 class="dashboard-title">
+         <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> Dashboard 
+        </h1>
+        <% if (user.role === 'organizer') { %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Role-specific Content -->
+    <% if (user.role === 'participant') { %>
+      <div class="participant-section">
+        <h2 class="section-title" style="margin-left: 4rem;font-size:40px;">Your Registered Hackathons</h2>
+        <div class="participant-card">
+          <% if (data.registeredHackathons && data.registeredHackathons.length > 0) { %>
+            <div class="hackathon-list">
+              <% data.registeredHackathons.forEach(hackathon => { %>
+                <div class="hackathon-item">
+                  <div class="hackathon-info">
+                    <div>
+                      <h3 class="hackathon-title">Title: <%= hackathon.title %></h3>
+                      <p class="hackathon-organizer" style="color:black">Organized by <%= hackathon.organizer.name %></p>
+                    </div>
+                    <span class="hackathon-status <%= hackathon.status %>">
+                      <%= hackathon.status.charAt(0).toUpperCase() + hackathon.status.slice(1) %>
+                    </span>
+                  </div>
+                  <div class="hackathon-dates">
+                    <div class="start-date">
+                      <p class="date-label">Start Date :</p>
+                      <p class="date-value"><%= new Date(hackathon.startDate).toLocaleDateString() %></p>
+                    </div>
+                    <div class="end-date">
+                      <p class="date-label">End Date</p>
+                      <p class="date-value"><%= new Date(hackathon.endDate).toLocaleDateString() %></p>
+                    </div>
+                  </div>
+                  <div class="hackathon-link">
+                    <a href="/hackathons/<%= hackathon._id %>" class="details-link" style="color:rgba(238, 55, 55, 0.779)">
+                      View Details →
+                    </a>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="no-hackathons">
+              <p>You haven't registered for any hackathons yet.</p>
+              <a href="/hackathons" class="browse-link">Browse Available Hackathons →</a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } else if (user.role === 'organizer') { %>
+      <div class="organizer-section">
+        <div class="organizer-card">
+          <h2 class="section-title" style="font-size: 3rem;">Your Organized Hackathons</h2>
+          <% if (data.organizedHackathons && data.organizedHackathons.length > 0) { %>
+            <div class="hackathon-list">
+              <% data.organizedHackathons.forEach(hackathon => { %>
+                <div class="hackathon-item">
+                  <div class="hackathon-info">
+                    <div>
+                      <h3 class="hackathon-title">Title: <%= hackathon.title %></h3>
+                      <p class="hackathon-teams"><%= hackathon.teams.length %> Teams Registered</p>
+                    </div>
+                    <div class="hackathon-actions">
+                      <a href="/hackathons/<%= hackathon._id %>/edit" class="edit-btn">Edit</a>
+                      <span class="hackathon-status <%= hackathon.status %>">
+                        <%= hackathon.status.charAt(0).toUpperCase() + hackathon.status.slice(1) %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="hackathon-dates">
+                    <div>
+                      <p class="date-label">Start Date</p>
+                      <p class="date-value"><%= new Date(hackathon.startDate).toLocaleDateString() %></p>
+                    </div>
+                    <div>
+                      <p class="date-label">End Date</p>
+                      <p class="date-value"><%= new Date(hackathon.endDate).toLocaleDateString() %></p>
+                    </div>
+                    <div>
+                      <p class="date-label">Registration Deadline</p>
+                      <p class="date-value"><%= new Date(hackathon.registrationDeadline).toLocaleDateString() %></p>
+                    </div>
+                  </div>
+                  <div class="hackathon-link">
+                    <a href="/hackathons/<%= hackathon._id %>/manage" class="details-link">
+                      Manage Hackathon →
+                    </a>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="no-hackathons">
+              <p>You haven't organized any hackathons yet.</p>
+              <a href="/hackathons/create" class="create-link">Create Your First Hackathon →</a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } else if (user.role === 'judge') { %>
+      <div class="judge-section">
+        <div class="judge-card">
+          <h2 class="section-title">Assigned Hackathons</h2>
+          <% if (data.assignedHackathons && data.assignedHackathons.length > 0) { %>
+            <div class="hackathon-list">
+              <% data.assignedHackathons.forEach(hackathon => { %>
+                <div class="hackathon-item">
+                  <div class="hackathon-info">
+                    <div>
+                      <h3 class="hackathon-title"><%= hackathon.title %></h3>
+                      <p class="hackathon-teams"><%= hackathon.teams.length %> Teams to Evaluate</p>
+                    </div>
+                    <span class="hackathon-status <%= hackathon.status %>">
+                      <%= hackathon.status.charAt(0).toUpperCase() + hackathon.status.slice(1) %>
+                    </span>
+                  </div>
+                  <div class="hackathon-dates">
+                    <div>
+                      <p class="date-label">Start Date</p>
+                      <p class="date-value"><%= new Date(hackathon.startDate).toLocaleDateString() %></p>
+                    </div>
+                    <div>
+                      <p class="date-label">End Date</p>
+                      <p class="date-value"><%= new Date(hackathon.endDate).toLocaleDateString() %></p>
+                    </div>
+                  </div>
+                  <div class="hackathon-link">
+                    <a href="/hackathons/<%= hackathon._id %>/judge" class="details-link">
+                      Start Evaluation →
+                    </a>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="no-hackathons">
+              <p>You haven't been assigned to any hackathons yet.</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
